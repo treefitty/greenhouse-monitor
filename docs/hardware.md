@@ -5,20 +5,29 @@
 | OLED | Connects to |
 |------|-------------|
 | GND  | − rail |
-| VCC  | + rail (3.3 V) |
+| VCC  | + rail (5 V) |
 | SCL  | Witty GPIO5 |
 | SDA  | Witty GPIO4 |
 
-Witty VCC goes to the + rail and Witty GND to the − rail. Everything shares one ground.
+Witty VCC goes to the + rail (5 V) and Witty GND to the − rail. Everything shares one ground.
+
+The OLED runs on 5 V only because most modules have their own 3.3 V regulator (a tiny part marked
+662K), which keeps SDA/SCL at 3.3 V. Check with a meter: SDA and SCL to GND should read about 3.3 V.
+If they read 5 V, the module has no regulator and needs a separate 3.3 V supply.
+
+Don't power anything from CH_PD. It's the chip-enable pin, pulled up through a resistor: any load
+pulls it low and switches the ESP8266 off.
 
 Check the labels printed on the OLED itself. Some modules put VCC first, others GND.
 
 ## Power
 
-- Bench supply: **3.3 V**, current limit about **0.3 A**, into the rails.
-- Expected draw: about 28 mA for the board alone, a little more with the screen.
+- Bench supply: **5.0 V**, current limit about **0.5 A**, into the rails.
+- Witty VCC is the *input* to its onboard 1117 regulator, not a 3.3 V pin, whatever the pinout diagrams say. Feed it 3.3 V and the chip gets
+  about 2.3 V: enough to blink without Wi-Fi, but it won't boot with Wi-Fi (blank screen, LED off,
+  steady ~28 mA).
+- Expected draw: about 70–80 mA with Wi-Fi on, in short spikes up to about 350 mA while it transmits. A 0.3 A limit can brown out the board.
 - 0.000 A means nothing is connected. If it hits the current limit, there's a short: switch off.
-- Keep the OLED on 3.3 V. On 5 V its I2C pull-ups drive the ESP8266 pins above their 3.3 V rating.
 - Never power from the bench supply and USB at the same time.
 
 ## Breadboard gotchas
