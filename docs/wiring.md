@@ -98,6 +98,9 @@ Wire colours on the SHT45 probe vary by seller. Check the listing or the label b
 
 ## Screen button
 
+The screen is for debugging only. Both it and the button sit inside the case and are used with the
+lid open. Readings are checked over Wi-Fi.
+
 A momentary push button between GPIO6 (D12) and GND. GPIO6 is one of the ESP32-C6's low-power
 pins, which can wake the chip from deep sleep. The firmware enables its internal pull-up. Pressing
 the button wakes the board and shows the screen for 30 s.
@@ -120,8 +123,8 @@ the button wakes the board and shows the screen for 30 s.
 
 ## Enclosure
 
-- Board, battery and OLED go in the IP65 box. Cut a window for the OLED and cover it with clear
-  acrylic, sealed with silicone.
+- Board, battery, OLED and button all go in the IP65 box. There's no window, so the lid stays sealed
+  except when debugging.
 - Run every cable through a PG7 gland: SHT45 probe, 3 moisture cables, the DS18B20 bus and the panel.
 - The VEML7700 needs to see the sky. Mount it behind a clear window, facing up, or in its own
   small sealed box. A window cuts some of the light, so readings are relative unless you calibrate.
