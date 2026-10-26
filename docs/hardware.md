@@ -1,5 +1,8 @@
 # Hardware
 
+This is the current Witty bench setup. The FireBeetle 2 ESP32-C6 replaces it for the battery
+and solar build, which is wired as described in [wiring.md](wiring.md).
+
 ## Wiring
 
 | OLED | Connects to |

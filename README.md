@@ -12,6 +12,9 @@ ESP8266-based greenhouse environment monitor with an SSD1306 OLED display.
 
 Wiring, power and troubleshooting are in [docs/hardware.md](docs/hardware.md).
 
+The planned battery and solar build (FireBeetle 2 ESP32-C6, light, humidity, soil moisture and soil
+temperature sensors) is wired as described in [docs/wiring.md](docs/wiring.md).
+
 ## Building and flashing
 
 Needs [PlatformIO](https://platformio.org/) and Docker (OrbStack works).
