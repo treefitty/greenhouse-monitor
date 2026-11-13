@@ -2,3 +2,4 @@
 #define WIFI_SSID "your-network"
 #define WIFI_PASS "your-wifi-password"
 #define OTA_PASS "pick-a-password" // needed to flash over Wi-Fi
+#define UPLOAD_URL "" // readings are POSTed here as JSON every hour. Empty: kept on the board

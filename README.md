@@ -1,62 +1,43 @@
 # Greenhouse Monitor
 
-ESP8266-based greenhouse environment monitor with an SSD1306 OLED display.
+Battery and solar greenhouse monitor on a FireBeetle 2 ESP32-C6: light, air temperature and
+humidity, and soil moisture and temperature in each pot. It wakes every 10 minutes to take a
+reading, and uploads the readings over Wi-Fi once an hour.
 
-**Status:** the board boots and drives the display (title and uptime counter). Sensors are next.
+**Status:** firmware written for the ESP32-C6 build, waiting on parts. Plan and parts list in
+[issue #1](https://github.com/treefitty/greenhouse-monitor/issues/1), wiring in
+[docs/wiring.md](docs/wiring.md). The old Witty ESP8266 bench setup is in
+[docs/hardware.md](docs/hardware.md), and its firmware is in git history (commit `578a82d`).
 
-## Hardware
+## How it runs
 
-- Witty Cloud ESP8266 (ESP-12F top board + CH340 USB base)
-- SSD1306 128x64 OLED, I2C
-- Bench power supply (or the Witty's micro-USB)
+- **Timer wake (every 10 min):** read the sensors, store the reading in RTC memory, sleep. Every
+  6th wake, connect to Wi-Fi and POST all stored readings as JSON to `UPLOAD_URL`. If that fails,
+  they're kept and retried the next hour (up to a day's worth).
+- **Power-on, or the button inside the case:** debug session for 5 minutes. The screen shows live
+  readings, Wi-Fi flashing is on, and DS18B20 addresses are printed over USB serial. Then it sleeps.
 
-Wiring, power and troubleshooting are in [docs/hardware.md](docs/hardware.md).
-
-The planned battery and solar build (FireBeetle 2 ESP32-C6, light, humidity, soil moisture and soil
-temperature sensors) is wired as described in [docs/wiring.md](docs/wiring.md).
+Settings (pot pins, probe addresses, intervals, battery divider) are at the top of `src/main.cpp`.
 
 ## Building and flashing
 
-Needs [PlatformIO](https://platformio.org/) and Docker (OrbStack works).
-
-There's no native Apple Silicon macOS build of the ESP8266 compiler. `flash.sh` compiles inside a
-`linux/arm64` container, which runs natively without emulation or Rosetta, and then flashes over
-USB from macOS with esptool.
-
-### Flash over Wi-Fi (normal way)
-
-The board stays on the breadboard. From the project folder:
-
-```sh
-./flash.sh ota                  # or: ./flash.sh ota <ip> if greenhouse.local doesn't resolve
-```
-
-If macOS asks whether Python may accept incoming connections, allow it. The board connects back to
-your Mac to download the firmware.
-
-### Flash over USB (first time, or if Wi-Fi flashing fails)
+Needs [PlatformIO](https://platformio.org/). The ESP32-C6 toolchain runs natively on Apple Silicon.
 
 One-off setup:
 
 ```sh
-~/.platformio/penv/bin/pip install esptool
-cp src/secrets.example.h src/secrets.h   # then fill in Wi-Fi name, password and an OTA password
+cp src/secrets.example.h src/secrets.h   # then fill in Wi-Fi, an OTA password and the upload URL
 ```
-
-Move the Witty's top board onto its USB base, plug it in, then:
 
 ```sh
-./flash.sh
+./flash.sh           # build, flash over USB-C, then open the serial monitor
+./flash.sh ota       # flash over Wi-Fi. Press the button first: it only listens during a debug session
+./flash.sh build     # compile only
+./flash.sh monitor   # serial monitor
 ```
 
-Move it back to the breadboard. The display shows its IP address once it's on Wi-Fi.
-
-### Other commands
-
-```sh
-./flash.sh build     # compile only, no flashing
-./flash.sh monitor   # serial monitor (USB base only)
-```
+If macOS asks whether Python may accept incoming connections, allow it. The board connects back to
+your Mac to download the firmware.
 
 ## Layout
 
