@@ -66,6 +66,23 @@ All three stay on 3V3 because they draw microamps when idle. Firmware switches t
 before sleep (command 0xAE). Every module has its own pull-up resistors. Three sets in parallel is
 fine.
 
+### OLED pin order
+
+The board's I2C header and the OLED list their pins in different orders, so four wires run
+straight across land every pin in the wrong place. The screen stays blank and the serial log
+fills with `i2cWrite(): i2c_master_transmit failed: [259] ESP_ERR_INVALID_STATE`. Match the
+pins by their labels:
+
+| Board header (next to VIN) | OLED pin |
+|---|---|
+| 3V3 | VCC |
+| GND | GND |
+| SCL | SCL |
+| SDA | SDA |
+
+Our OLED module's pins read SDA, SCL, VCC, GND. Other modules put GND or VCC first, so check the
+labels printed on the module.
+
 Wire colours on the SHT45 probe vary by seller. Check the listing or the label before connecting.
 
 ## Pot cables
