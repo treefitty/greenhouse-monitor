@@ -78,8 +78,11 @@ Reading takeReading() {
   bool sht = sht4.begin() && sht4.getEvent(&humidity, &temp);
   r.airC10 = sht ? tenths(temp.temperature) : NONE;
   r.humidity10 = sht ? tenths(humidity.relative_humidity) : NONE;
-  r.lux = veml.begin() ? veml.readLux(VEML_LUX_AUTO) : NAN;
-  veml.enable(false); // 45 µA down to 0.5 µA until the next begin()
+  r.lux = NAN;
+  if (veml.begin()) { // calling anything else on a VEML that didn't answer dereferences null
+    r.lux = veml.readLux(VEML_LUX_AUTO);
+    veml.enable(false); // 45 µA down to 0.5 µA until the next begin()
+  }
 
   r.batteryMv = analogReadMilliVolts(BATTERY) * BATTERY_DIVIDER;
   return r;
